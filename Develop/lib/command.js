@@ -1,6 +1,6 @@
-// const Manager = require("./lib/Manager");
-// const Engineer = require("./lib/Engineer");
-// const Intern = require("./lib/Intern");
+const Manager = require("./Manager");
+const Engineer = require("./Engineer");
+const Intern = require("./Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -89,41 +89,46 @@ const returnScreen = () =>{
       {
         type: "list",
         message: "What would you like to do now?",
-        choices: [{name: "Add another employee", value: "addAnother"}, {name: "Quit", value: "quit"}],
+        choices: [{name: "Add another employee", value: true}, {name: "Quit", value: false}],
         name: "returnChoice"
       }
     ])
 }
 
+const employees = [];
 
 async function init(){
+  let returnChoice = true;
+
   const {welcomeChoice} = await welcomeScreen();
-  welcomeChoice? {homeChoice} = await homeScreen() : console.log("signing off");
-  
-  const employee = await baseEmployee();
-  switch(homeChoice){
-    case "manager":
-      employee.officeNumber = (await addManager()).officeNumber;
-      break;
-    case "engineer":
-      employee.github = (await addEngineer()).github;
-      break;
-    case "intern":
-      employee.school = (await addIntern()).school;
-      break;
-    default:
-      console.log("hit Default");
+  welcomeChoice? returnChoice = true : returnChoice = false;
+  while (returnChoice === true){
+    welcomeChoice? {homeChoice} = await homeScreen() : console.log("signing off");
+    const employee = await baseEmployee();
+    switch(homeChoice){
+      case "manager":
+        employee.officeNumber = (await addManager()).officeNumber;
+        const manager = new Manager(employee.name, employee.id, employee.email, employee.officeNumber);
+        employees.push(manager);
+        break;
+      case "engineer":
+        employee.github = (await addEngineer()).github;
+        const engineer = new Engineer(employee.name, employee.id, employee.email, employee.github);
+        employees.push(engineer);
+        break;
+      case "intern":
+        employee.school = (await addIntern()).school;
+        const intern = new Intern(employee.name, employee.id, employee.email, employee.school);
+        employees.push(intern);
+        break;
+      default:
+        console.log("hit Default");
+    }
+    console.log(employees);
+    returnChoice = (await returnScreen()).returnChoice;
   }
-  console.log(`Congatulations! ${employee.name} has been added you your roster`);
-  const {returnChoice} = await returnScreen();
+  
+  console.log(`hit outside while ${employees}`);
 }
 
 init();
-
-
-// if(welcomeChoice){
-//   homeScreen();
-// } else{
-//   console.log("signing off")
-// }
-// console.log(`hit welcome ${welcomeChoice}`);
