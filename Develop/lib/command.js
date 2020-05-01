@@ -29,22 +29,93 @@ const homeScreen = () =>{
     ])
 }
 
+const baseEmployee = () =>{
+  return inquirer
+    .prompt([
+    {
+      type: "input",
+      message: "Enter employee name:",
+      name: "name"
+    },
+    {
+      type: "input",
+      message: "Enter employee id:",
+      name: "id"
+    },
+    {
+      type: "input",
+      message: "Enter employee email:",
+      name: "email"
+    }
+  ])
+}
+
+const addManager = () =>{
+  return inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Enter employee office number:",
+        name: "officeNumber"
+      }
+  ])
+}
+
+const addEngineer = () =>{
+  return inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Enter employee github username:",
+        name: "github"
+      }
+  ])
+}
+
+const addIntern = () =>{
+  return inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Current school intern is attending:",
+        name: "school"
+      }
+  ])
+}
+
+const returnScreen = () =>{
+  return inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "What would you like to do now?",
+        choices: [{name: "Add another employee", value: "addAnother"}, {name: "Quit", value: "quit"}],
+        name: "returnChoice"
+      }
+    ])
+}
+
+
 async function init(){
   const {welcomeChoice} = await welcomeScreen();
   welcomeChoice? {homeChoice} = await homeScreen() : console.log("signing off");
+  
+  const employee = await baseEmployee();
   switch(homeChoice){
     case "manager":
-      console.log("manager");
+      employee.officeNumber = (await addManager()).officeNumber;
       break;
     case "engineer":
-      console.log("engineer");
+      employee.github = (await addEngineer()).github;
       break;
     case "intern":
-      console.log("intern");
+      employee.school = (await addIntern()).school;
       break;
     default:
       console.log("hit Default");
   }
+  console.log(`Congatulations! ${employee.name} has been added you your roster`);
+  const {returnChoice} = await returnScreen();
 }
 
 init();
